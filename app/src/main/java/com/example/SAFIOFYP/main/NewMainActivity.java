@@ -433,7 +433,7 @@ List<Record> bikesPlaces=new ArrayList<>();
         Log.e(TAG, "loadDataToMap: " );
         final ProgressDialog progressDialog = new ProgressDialog(NewMainActivity.this);
         progressDialog.setCancelable(false);
-        progressDialog.setMessage("Getting locations...");
+        progressDialog.setMessage("Loading bike stations from Dublin Bikes. Please wait");
         progressDialog.show();
         Call<LocationResponse> apiForRecord = RestClient.getInstance().getApiServices().requestForBikeLocations(Constants.BIKE_PLACES_URL);
         apiForRecord.enqueue(new Callback<LocationResponse>() {

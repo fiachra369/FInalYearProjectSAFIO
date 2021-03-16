@@ -34,17 +34,8 @@ import java.util.Objects;
 public class LoginActivity extends AppCompatActivity {
     EditText mEmail,mPassword;
     Button mLoginBtn;
-    TextView forgotTextLink;
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
-
-    public static final String NAME = "NAME";
-    public static final String NUMBER = "NUMBER";
-    public static final String EMAIL = "EMAIL";
-    public static final String CONDITION = "CONDITION";
-    public static final String DOB = "DOB";
-
-    ProgressBar progressBar;
 
 
     @Override
