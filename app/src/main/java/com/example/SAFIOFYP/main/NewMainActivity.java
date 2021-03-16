@@ -98,10 +98,6 @@ List<Record> bikesPlaces=new ArrayList<>();
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
-    private static final float DEFAULT_ZOOM = 15f;
-
-    SearchView searchView;
-    private FirebaseAuth mAuth;
 
     FirebaseFirestore db;
 
@@ -123,21 +119,10 @@ List<Record> bikesPlaces=new ArrayList<>();
 
         db = FirebaseFirestore.getInstance();
 
-        mAuth = FirebaseAuth.getInstance();
-
         FirebaseAuth.getInstance().getCurrentUser();
 
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-//        mAppBarConfiguration = new AppBarConfiguration.Builder(
-//                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
-//                .setDrawerLayout(drawer)
-//                .build();
-//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-//        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-//        NavigationUI.setupWithNavController(navigationView, navController);
 
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -281,9 +266,6 @@ List<Record> bikesPlaces=new ArrayList<>();
                                     })
                                     .show();
                         }
-
-//                        Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
-
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -322,13 +304,6 @@ List<Record> bikesPlaces=new ArrayList<>();
         return true;
     }
 
-//    @Override
-//    public boolean onSupportNavigateUp() {
-//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-//        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-//                || super.onSupportNavigateUp();
-//    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -342,11 +317,6 @@ List<Record> bikesPlaces=new ArrayList<>();
                 startActivity(intent);
                 return true;
         }
-
-        /*
-         * if you have other menu items in your activity/toolbar
-         * handle them here and return true
-         */
 
         return super.onOptionsItemSelected(item);
     }
@@ -587,13 +557,10 @@ List<Record> bikesPlaces=new ArrayList<>();
         String embed="dfrom="+dfrom+"&dto="+dto+"&station=";
         Log.e(TAG, "getTime: "+embed );
         return embed;
-
-//"        dfrom=202001011900&dto=202001021900&station="
     }
 
     private void moveCamera(LatLng latLng){
         Log.e(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude );
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, NewMainActivity.DEFAULT_ZOOM));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
     }
 
