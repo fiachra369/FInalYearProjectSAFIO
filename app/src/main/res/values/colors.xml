@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="green">#4ec274</color>
+    <color name="lightGray">#c5debb</color>
+    <color name="white">#FFFFFF</color>
+    <color name="red">#ec5b4e</color>
+    <color name="question1bg">#3dc795</color>
+    <color name="colorSplashScreenBG">#ffffff</color>
+    <color name="question2bg">#008bf7</color>
+    <color name="question3bg">#cc67e8</color>
+    <color name="question4bg">#f26083</color>
+    <color name="question5bg">#ebc502</color>
+
+    <color name="black">#FF000000</color>
+
+
+    <color name="text_traffic_color">#C72825</color>
+
+</resources>

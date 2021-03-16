@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "384897026725",
+    "firebase_url": "https://fir-registerlogin-14dba.firebaseio.com",
+    "project_id": "fir-registerlogin-14dba",
+    "storage_bucket": "fir-registerlogin-14dba.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:384897026725:android:b7e8b791ee3af855719b4c",
+        "android_client_info": {
+          "package_name": "com.example.SAFIOFYP"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "384897026725-av0bah3g6ql9kca2e20nhb7dbivaq2db.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWEgeijlw7yMNmaSfRU9-5ZvImF4cke_U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "384897026725-av0bah3g6ql9kca2e20nhb7dbivaq2db.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

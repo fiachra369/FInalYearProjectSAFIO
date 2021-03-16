@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/check_location"
+            android:icon="@drawable/ic_baseline_directions_walk_24"
+            android:title="Check Street Safety" />
+        <item
+            android:id="@+id/checkTrafic"
+            android:icon="@drawable/ic_baseline_traffic_24"
+            android:title="Check Road Safety" />
+        <item
+            android:id="@+id/edit_profile"
+            android:icon="@drawable/ic_edit"
+            android:title="View/Edit Profile" />
+        <item
+            android:id="@+id/questionnaire"
+            android:icon="@drawable/ic_question"
+            android:title="Re-take Health Exam" />
+        <item
+            android:id="@+id/logout"
+            android:icon="@drawable/ic_baseline_login_24"
+            android:title="Log out"/>
+    </group>
+</menu>
