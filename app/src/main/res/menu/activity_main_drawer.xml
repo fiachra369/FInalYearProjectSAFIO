@@ -14,6 +14,14 @@
             android:icon="@drawable/ic_baseline_traffic_24"
             android:title="Check Road Safety" />
         <item
+            android:id="@+id/ShowDublinBikes"
+            android:icon="@drawable/ic_baseline_login_24"
+            android:title="Show Dublin Bikes Station"/>
+        <item
+            android:id="@+id/RemoveDublinBikes"
+            android:icon="@drawable/ic_baseline_login_24"
+            android:title="Remove Dublin Bikes Station"/>
+        <item
             android:id="@+id/edit_profile"
             android:icon="@drawable/ic_edit"
             android:title="View/Edit Profile" />

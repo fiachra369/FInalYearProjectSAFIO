@@ -52,6 +52,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -153,6 +154,12 @@ List<Record> bikesPlaces=new ArrayList<>();
                             startActivity(intent);
                             Toast.makeText(NewMainActivity.this, "You Have Successfully Signed Out", Toast.LENGTH_LONG).show();
                         }
+                    else if(id == R.id.ShowDublinBikes) {
+                        loadDataToMap();
+                    }
+                    else if(id == R.id.RemoveDublinBikes) {
+                        mMap.clear();
+                    }
                     }
                 drawer.close();
                 return false;
@@ -426,7 +433,6 @@ List<Record> bikesPlaces=new ArrayList<>();
 
         }
 
-        loadDataToMap();
     }
 
     private void loadDataToMap() {
@@ -527,7 +533,7 @@ List<Record> bikesPlaces=new ArrayList<>();
 
                     }else{
                         //safe
-                        MarkerOptions place2 = new MarkerOptions().position(latLng).title(a.getName()).snippet("Station : "+a.getName()+"\n" +
+                        MarkerOptions place2 = new MarkerOptions().position(latLng).title(a.getName()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).snippet("Station : "+a.getName()+"\n" +
                                 "Available Bikes : "+historics.get(historics.size()-1).getAvailableBikes()+"\n" +
                                 "Safety : Safe");
                         mMap.addMarker(place2);

@@ -43,7 +43,7 @@
         android:layout_marginEnd="10dp"
         android:background="@drawable/boarder"
         android:drawableStart="@drawable/places_ic_search"
-        android:hint="Enter Address, City or Zip Code"
+        android:hint="Check Safety of Shops, Shopping Centres, Restaurants "
         android:iconifiedByDefault="false"
         android:imeOptions="actionSearch"
         android:inputType="textNoSuggestions"

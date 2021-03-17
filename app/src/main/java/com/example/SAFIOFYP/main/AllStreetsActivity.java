@@ -184,7 +184,7 @@ public class AllStreetsActivity extends AppCompatActivity {
         apiForRecord.enqueue(new Callback<RecordsBody>() {
             @Override
             public void onResponse(Call<RecordsBody> call, Response<RecordsBody> response) {
-                /*if (response.isSuccessful()) {
+                if (response.isSuccessful()) {
 
                     String currentDay = getDay(tempDate);
                     int currentMonth = getMonth(tempDate);
@@ -643,7 +643,7 @@ public class AllStreetsActivity extends AppCompatActivity {
                     });
 
 
-                }*/
+                }
 
             }
 
