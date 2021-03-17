@@ -13,6 +13,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -21,6 +22,7 @@ import android.view.Menu;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -52,7 +54,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -70,6 +71,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.MenuItemCompat;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
@@ -90,7 +92,7 @@ import retrofit2.Callback;
 public class NewMainActivity extends AppCompatActivity implements OnMapReadyCallback, TaskLoadedCallback {
 
     private AppBarConfiguration mAppBarConfiguration;
-List<Record> bikesPlaces=new ArrayList<>();
+    List<Record> bikesPlaces = new ArrayList<>();
     DrawerLayout drawer;
     ActionBarDrawerToggle toggle;
     Button clearButton;
@@ -99,6 +101,10 @@ List<Record> bikesPlaces=new ArrayList<>();
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
+    private static final float DEFAULT_ZOOM = 15f;
+
+    SearchView searchView;
+    private FirebaseAuth mAuth;
 
     FirebaseFirestore db;
 
@@ -115,15 +121,44 @@ List<Record> bikesPlaces=new ArrayList<>();
         setContentView(R.layout.activity_new_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Log.e(TAG, "onCreate: " );
+        Log.e(TAG, "onCreate: ");
 
 
         db = FirebaseFirestore.getInstance();
+
+        mAuth = FirebaseAuth.getInstance();
 
         FirebaseAuth.getInstance().getCurrentUser();
 
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        MenuItem switchItem = navigationView.getMenu().findItem(R.id.switch1);
+        CompoundButton switchView = (CompoundButton) MenuItemCompat.getActionView(switchItem);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+//                switchItem.setChecked(true);
+                switchView.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (isChecked){
+                        drawer.close();
+                        mMap.clear();
+                        loadDataToMap();
+                    }else{
+                        drawer.close();
+                        mMap.clear();
+                    }
+                });
+            }
+        },1000);
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+//        mAppBarConfiguration = new AppBarConfiguration.Builder(
+//                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+//                .setDrawerLayout(drawer)
+//                .build();
+//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+//        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+//        NavigationUI.setupWithNavController(navigationView, navController);
 
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -139,28 +174,19 @@ List<Record> bikesPlaces=new ArrayList<>();
                     if (id == R.id.check_location) {
                         Intent intent = new Intent(NewMainActivity.this, MyLocationActivity.class);
                         startActivity(intent);
-                    }
-                    else if(id == R.id.checkTrafic){
+                    } else if (id == R.id.checkTrafic) {
                         Intent intent = new Intent(NewMainActivity.this, TraficIndexActivity.class);
                         startActivity(intent);
+                    } else if (id == R.id.questionnaire) {
+                        Intent intent = new Intent(NewMainActivity.this, QuestionsActivity.class);
+                        startActivity(intent);
+                    } else if (id == R.id.logout) {
+                        Intent intent = new Intent(NewMainActivity.this, HomeActivity.class);
+                        FirebaseAuth.getInstance().signOut();
+                        startActivity(intent);
+                        Toast.makeText(NewMainActivity.this, "You Have Successfully Signed Out", Toast.LENGTH_LONG).show();
                     }
-                    else if(id == R.id.questionnaire) {
-                            Intent intent = new Intent(NewMainActivity.this, QuestionsActivity.class);
-                            startActivity(intent);
-                    }
-                    else if(id == R.id.logout) {
-                            Intent intent = new Intent(NewMainActivity.this, HomeActivity.class);
-                            FirebaseAuth.getInstance().signOut();
-                            startActivity(intent);
-                            Toast.makeText(NewMainActivity.this, "You Have Successfully Signed Out", Toast.LENGTH_LONG).show();
-                        }
-                    else if(id == R.id.ShowDublinBikes) {
-                        loadDataToMap();
-                    }
-                    else if(id == R.id.RemoveDublinBikes) {
-                        mMap.clear();
-                    }
-                    }
+                }
                 drawer.close();
                 return false;
             }
@@ -196,14 +222,14 @@ List<Record> bikesPlaces=new ArrayList<>();
             return;
         }
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (location!=null){
+        if (location != null) {
             double longitude = location.getLongitude();
             double latitude = location.getLatitude();
             getDirection = findViewById(R.id.directionsBtn);
             getDirection.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    new FetchURL(NewMainActivity.this).execute(getUrl((new LatLng(latitude,longitude)), place2.getPosition(), "walking"), "walking");
+                    new FetchURL(NewMainActivity.this).execute(getUrl((new LatLng(latitude, longitude)), place2.getPosition(), "walking"), "walking");
                 }
             });
         }
@@ -211,12 +237,11 @@ List<Record> bikesPlaces=new ArrayList<>();
 
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
-        Log.e(TAG, "onCreate: onMapReadySet" );
+        Log.e(TAG, "onCreate: onMapReadySet");
         getLocationPermission();
 
 
-
-        autoCompleteTextView.setAdapter(new PlaceAutoSuggestAdapter(NewMainActivity.this,android.R.layout.simple_list_item_1));
+        autoCompleteTextView.setAdapter(new PlaceAutoSuggestAdapter(NewMainActivity.this, android.R.layout.simple_list_item_1));
 
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -224,9 +249,9 @@ List<Record> bikesPlaces=new ArrayList<>();
                 String location = autoCompleteTextView.getText().toString();
                 List<Address> addressList = null;
 
-                PlaceAutoSuggestAdapter placeAutoSuggestAdapter= (PlaceAutoSuggestAdapter) parent.getAdapter();
+                PlaceAutoSuggestAdapter placeAutoSuggestAdapter = (PlaceAutoSuggestAdapter) parent.getAdapter();
 //                placeAutoSuggestAdapter.placeDetailsData.get(position).getPlace_id();
-                Log.d("Place_id",placeAutoSuggestAdapter.getPlaceDetailsData().get(position).getPlace_id());
+                Log.d("Place_id", placeAutoSuggestAdapter.getPlaceDetailsData().get(position).getPlace_id());
                 Geocoder geocoder = new Geocoder(NewMainActivity.this);
                 try {
                     addressList = geocoder.getFromLocationName(location, 1);
@@ -256,13 +281,12 @@ List<Record> bikesPlaces=new ArrayList<>();
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, "https://us-central1-fir-registerlogin-14dba.cloudfunctions.net/getPopularTime", new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("Data: ",response);
+                        Log.d("Data: ", response);
                         String[] res = response.split("//");
 
-                        if(res[1].equals("No Popular Time")){
+                        if (res[1].equals("No Popular Time")) {
 
-                        }
-                        else {
+                        } else {
                             new AlertDialog.Builder(NewMainActivity.this, R.style.CustomAlertDialog)
                                     .setMessage("Live Status : " + res[1] + "\n\nSafety : " + res[0])
                                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -273,6 +297,9 @@ List<Record> bikesPlaces=new ArrayList<>();
                                     })
                                     .show();
                         }
+
+//                        Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -296,7 +323,7 @@ List<Record> bikesPlaces=new ArrayList<>();
 
                 requestQueue.add(stringRequest);
 
-                Log.d("Address : ",autoCompleteTextView.getText().toString());
+                Log.d("Address : ", autoCompleteTextView.getText().toString());
 
 
             }
@@ -311,19 +338,31 @@ List<Record> bikesPlaces=new ArrayList<>();
         return true;
     }
 
+//    @Override
+//    public boolean onSupportNavigateUp() {
+//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+//        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+//                || super.onSupportNavigateUp();
+//    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         // This is required to make the drawer toggle work
-        if(toggle.onOptionsItemSelected(item)) {
+        if (toggle.onOptionsItemSelected(item)) {
             return true;
         }
         switch (item.getItemId()) {
             case R.id.home_menu:
-                Intent intent = new Intent( NewMainActivity.this, HomeActivity.class);
+                Intent intent = new Intent(NewMainActivity.this, HomeActivity.class);
                 startActivity(intent);
                 return true;
         }
+
+        /*
+         * if you have other menu items in your activity/toolbar
+         * handle them here and return true
+         */
 
         return super.onOptionsItemSelected(item);
     }
@@ -368,7 +407,7 @@ List<Record> bikesPlaces=new ArrayList<>();
                             Location currentLocation = (Location) task.getResult();
 
                             Log.d(TAG, "onComplete: found location!");
-                            if (currentLocation==null)
+                            if (currentLocation == null)
                                 return;
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
 
@@ -399,16 +438,15 @@ List<Record> bikesPlaces=new ArrayList<>();
             location.addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
-                    if(task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         Location currentLocation = (Location) task.getResult();
 
                         Log.d(TAG, "onComplete: found location!");
-                        if (currentLocation!=null)
+                        if (currentLocation != null)
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
 
 
-
-                    }else{
+                    } else {
                         Log.d(TAG, "onComplete: current location is null");
                         Toast.makeText(NewMainActivity.this, "unable to get current location", Toast.LENGTH_SHORT).show();
                     }
@@ -433,32 +471,33 @@ List<Record> bikesPlaces=new ArrayList<>();
 
         }
 
+//        loadDataToMap();
     }
 
     private void loadDataToMap() {
-        Log.e(TAG, "loadDataToMap: " );
+        Log.e(TAG, "loadDataToMap: ");
         final ProgressDialog progressDialog = new ProgressDialog(NewMainActivity.this);
         progressDialog.setCancelable(false);
-        progressDialog.setMessage("Loading bike stations from Dublin Bikes. Please wait");
+        progressDialog.setMessage("Getting locations...");
         progressDialog.show();
         Call<LocationResponse> apiForRecord = RestClient.getInstance().getApiServices().requestForBikeLocations(Constants.BIKE_PLACES_URL);
         apiForRecord.enqueue(new Callback<LocationResponse>() {
             @Override
             public void onResponse(Call<LocationResponse> call, retrofit2.Response<LocationResponse> response) {
                 progressDialog.dismiss();
-                if (response.body().getResult().getRecords()==null)
+                if (response.body().getResult().getRecords() == null)
                     return;
                 bikesPlaces.clear();
                 bikesPlaces.addAll(response.body().getResult().getRecords());
                 LatLng latLng = null;
-                for (Record a:bikesPlaces){
+                for (Record a : bikesPlaces) {
                     double lat;
                     double lon;
-                    lat=Double.parseDouble(a.getLatitude());
-                    lon=Double.parseDouble(a.getLongitude());
+                    lat = Double.parseDouble(a.getLatitude());
+                    lon = Double.parseDouble(a.getLongitude());
 
-                    latLng=new LatLng(lat,lon);
-                    getMarkerOptions(latLng,a);
+                    latLng = new LatLng(lat, lon);
+                    getMarkerOptions(latLng, a);
                 }
 
                 mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
@@ -490,7 +529,7 @@ List<Record> bikesPlaces=new ArrayList<>();
                         return info;
                     }
                 });
-                if (latLng!=null)
+                if (latLng != null)
                     moveCamera(latLng);
             }
 
@@ -501,76 +540,79 @@ List<Record> bikesPlaces=new ArrayList<>();
         });
     }
 
-    private void getMarkerOptions(LatLng latLng,Record a) {
-        Log.e(TAG, "getMarkerOptions: " );
+    private void getMarkerOptions(LatLng latLng, Record a) {
+        Log.e(TAG, "getMarkerOptions: ");
         final ProgressDialog progressDialog = new ProgressDialog(NewMainActivity.this);
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Getting details...");
 //        progressDialog.show();
-        String url=Constants.BIKE_PLACES_DETAIL_URL+getTime()+a.getNumber();
-        Log.e(TAG, "getMarkerOptions: "+url );
+        String url = Constants.BIKE_PLACES_DETAIL_URL + getTime() + a.getNumber();
+        Log.e(TAG, "getMarkerOptions: " + url);
         Call<List<LocationDetailResponse>> apiForRecord = RestClient.getInstance().getApiServices().requestForBikeLocationDetails(url);
         apiForRecord.enqueue(new Callback<List<LocationDetailResponse>>() {
             @Override
             public void onResponse(Call<List<LocationDetailResponse>> call, retrofit2.Response<List<LocationDetailResponse>> response) {
                 progressDialog.dismiss();
-                Log.e(TAG, "onResponse: "+response.body() );
-                if (response.body().size()==0||response.body().get(0).getHistoric()==null)
+                Log.e(TAG, "onResponse: " + response.body());
+                if (response.body().size() == 0 || response.body().get(0).getHistoric() == null)
                     return;
 
-                if (response.body().get(0).getHistoric().size()>=2){
-                    List<Historic> historics=response.body().get(0).getHistoric();
-                    int difference=historics.get(historics.size()-1).getAvailableBikes()-historics.get(historics.size()-2).getAvailableBikes();
-                    Log.e(TAG, "onResponse: last:"+historics.get(historics.size()-1).getAvailableBikes() );
-                    Log.e(TAG, "onResponse: Slast:"+historics.get(historics.size()-2).getAvailableBikes() );
-                    Log.e(TAG, "onResponse: adding marker" );
-                    if (difference>=2){
+                if (response.body().get(0).getHistoric().size() >= 2) {
+                    List<Historic> historics = response.body().get(0).getHistoric();
+                    int difference = historics.get(historics.size() - 1).getAvailableBikes() - historics.get(historics.size() - 2).getAvailableBikes();
+                    Log.e(TAG, "onResponse: last:" + historics.get(historics.size() - 1).getAvailableBikes());
+                    Log.e(TAG, "onResponse: Slast:" + historics.get(historics.size() - 2).getAvailableBikes());
+                    Log.e(TAG, "onResponse: adding marker");
+                    if (difference >= 2) {
                         //not safe
-                        MarkerOptions place2 = new MarkerOptions().position(latLng).title(a.getName()).snippet("Station : "+a.getName()+"\n" +
-                                "Available Bikes : "+historics.get(historics.size()-1).getAvailableBikes()+"\n" +
+                        MarkerOptions place2 = new MarkerOptions().position(latLng).title(a.getName()).snippet("Station : " + a.getName() + "\n" +
+                                "Available Bikes : " + historics.get(historics.size() - 1).getAvailableBikes() + "\n" +
                                 "Safety : Not safe");
                         mMap.addMarker(place2);
 
-                    }else{
+                    } else {
                         //safe
-                        MarkerOptions place2 = new MarkerOptions().position(latLng).title(a.getName()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).snippet("Station : "+a.getName()+"\n" +
-                                "Available Bikes : "+historics.get(historics.size()-1).getAvailableBikes()+"\n" +
-                                "Safety : Safe");
+                        MarkerOptions place2 = new MarkerOptions().position(latLng).title(a.getName()).snippet("Station : " + a.getName() + "\n" +
+                                "Available Bikes : " + historics.get(historics.size() - 1).getAvailableBikes() + "\n" +
+                                "Safety : safe");
                         mMap.addMarker(place2);
 
                     }
-                }else{
-                    Log.e(TAG, "onResponse: not 2" );
+                } else {
+                    Log.e(TAG, "onResponse: not 2");
                 }
             }
 
             @Override
             public void onFailure(Call<List<LocationDetailResponse>> call, Throwable t) {
                 progressDialog.dismiss();
-                Log.e(TAG, "onFailure: "+t.getMessage() );
+                Log.e(TAG, "onFailure: " + t.getMessage());
             }
         });
     }
 
     private String getTime() {
-        Calendar cal= Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         Date date = cal.getTime();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddhhmm");
-        String dto= formatter.format(date);
-        cal.add(Calendar.MINUTE,-10);
+        String dto = formatter.format(date);
+        cal.add(Calendar.MINUTE, -10);
         Date date2 = cal.getTime();
-        String dfrom= formatter.format(date2);
-        String embed="dfrom="+dfrom+"&dto="+dto+"&station=";
-        Log.e(TAG, "getTime: "+embed );
+        String dfrom = formatter.format(date2);
+        String embed = "dfrom=" + dfrom + "&dto=" + dto + "&station=";
+        Log.e(TAG, "getTime: " + embed);
         return embed;
+
+//"        dfrom=202001011900&dto=202001021900&station="
     }
 
-    private void moveCamera(LatLng latLng){
-        Log.e(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude );
+    private void moveCamera(LatLng latLng) {
+        Log.e(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude);
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, NewMainActivity.DEFAULT_ZOOM));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
     }
 
-    private void initMap(){
+    private void initMap() {
         Log.e(TAG, "initMap: initializing map");
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
@@ -578,23 +620,23 @@ List<Record> bikesPlaces=new ArrayList<>();
         mapFragment.getMapAsync(NewMainActivity.this);
     }
 
-    private void getLocationPermission(){
+    private void getLocationPermission() {
         Log.e(TAG, "getLocationPermission: getting location permissions");
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION};
 
-        if(ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            if(ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                    COURSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                    COURSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 mLocationPermissionsGranted = true;
                 initMap();
-            }else{
+            } else {
                 ActivityCompat.requestPermissions(this,
                         permissions,
                         LOCATION_PERMISSION_REQUEST_CODE);
             }
-        }else{
+        } else {
             ActivityCompat.requestPermissions(this,
                     permissions,
                     LOCATION_PERMISSION_REQUEST_CODE);

@@ -17,7 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <Button
         android:id="@+id/directionsBtn"
         android:layout_width="188dp"
@@ -43,7 +42,7 @@
         android:layout_marginEnd="10dp"
         android:background="@drawable/boarder"
         android:drawableStart="@drawable/places_ic_search"
-        android:hint="Check Safety of Shops, Shopping Centres, Restaurants "
+        android:hint="Enter Address, City or Zip Code"
         android:iconifiedByDefault="false"
         android:imeOptions="actionSearch"
         android:inputType="textNoSuggestions"

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
@@ -14,24 +15,22 @@
             android:icon="@drawable/ic_baseline_traffic_24"
             android:title="Check Road Safety" />
         <item
-            android:id="@+id/ShowDublinBikes"
-            android:icon="@drawable/ic_baseline_login_24"
-            android:title="Show Dublin Bikes Station"/>
-        <item
-            android:id="@+id/RemoveDublinBikes"
-            android:icon="@drawable/ic_baseline_login_24"
-            android:title="Remove Dublin Bikes Station"/>
+            android:id="@+id/switch1"
+            android:checkableBehavior="single"
+            android:icon="@drawable/ic_baseline_directions_bike_24"
+            android:title="Dublin Bikes"
+            app:actionViewClass="android.widget.Switch" />
         <item
             android:id="@+id/edit_profile"
-            android:icon="@drawable/ic_edit"
+            android:icon="@drawable/ic_baseline_edit_24"
             android:title="View/Edit Profile" />
         <item
             android:id="@+id/questionnaire"
-            android:icon="@drawable/ic_question"
+            android:icon="@drawable/ic_baseline_question_answer_24"
             android:title="Re-take Health Exam" />
         <item
             android:id="@+id/logout"
-            android:icon="@drawable/ic_baseline_login_24"
+            android:icon="@drawable/ic_baseline_exit_to_app_24"
             android:title="Log out"/>
     </group>
 </menu>
