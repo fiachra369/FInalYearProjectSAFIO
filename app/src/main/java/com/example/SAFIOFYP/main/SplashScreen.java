@@ -21,7 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class SplashScreen extends Activity {
 
 
-    private final int SPLASH_DISPLAY_LENGTH = 1000;
+    private final int SPLASH_DISPLAY_LENGTH = 2000;
 
     private FirebaseAuth fAuth;
 

@@ -9,7 +9,7 @@
         android:layout_width="213dp"
         android:layout_height="fill_parent"
         android:layout_gravity="center"
-        android:src="@drawable/l955abf7f_9ae1_43db_b75e_665709222c31_200x200" />
+        android:src="@drawable/safiologo" />
 
     <TextView android:layout_width="fill_parent"
         android:layout_height="wrap_content"

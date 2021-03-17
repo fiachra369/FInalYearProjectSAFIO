@@ -134,7 +134,7 @@ class MyJavaScriptInterface {
 
 
                 int cong_val = Integer.parseInt(cong_live.replace("%",""));
-                if(cong_val > 30){
+                if(cong_val >= 30){
                     mainActivity.safe_or_not.setText("Roads are not safe");
                 }
                 else{
