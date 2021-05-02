@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.SAFIOFYP">
+    package="com.example.safiofyp">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:name=".models.UserClient"
+        android:name="com.example.safiofyp.models.UserClient"
         android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@mipmap/ic_launcher"
         android:label="SAFIO"
@@ -18,17 +18,17 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:label">
-        <activity android:name=".main.TraficIndexActivity"></activity>
+        <activity android:name="com.example.safiofyp.main.TraficIndexActivity"></activity>
 
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
 
         <activity
-            android:name=".main.AllStreetsActivity"
+            android:name="com.example.safiofyp.main.AllStreetsActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".main.SplashScreen"
+            android:name="com.example.safiofyp.main.SplashScreen"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,31 +37,27 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".auth.LoginActivity"
+            android:name="com.example.safiofyp.auth.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".auth.RegisterActivity"
+            android:name="com.example.safiofyp.auth.RegisterActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".main.MyLocationActivity"
+            android:name="com.example.safiofyp.main.MyLocationActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".auth.HomeActivity"
+            android:name="com.example.safiofyp.auth.HomeActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".main.QuestionsActivity" />
+        <activity android:name="com.example.safiofyp.main.QuestionsActivity" />
         <activity
-            android:name=".main.ShowDetails"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".main.NewMainActivity"
+            android:name="com.example.safiofyp.main.ShowDetails"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".auth.EditProfile"
+            android:name="com.example.safiofyp.main.NewMainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <uses-library
-            android:name="org.apache.http.legacy"
-            android:required="false" />
+        <activity
+            android:name="com.example.safiofyp.auth.EditProfile"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
