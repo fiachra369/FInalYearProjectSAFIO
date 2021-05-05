@@ -574,7 +574,7 @@ public class MyLocationActivity extends AppCompatActivity {
                                 edited.put("street_density", String.valueOf(streetRisk));
                                 docRef.update(edited);
                                 double finalRisk = streetRisk * Constants.USER_RISK_SCORE;
-                                if (finalRisk >= 1) {
+                                if (finalRisk >= .5) {
                                     safeStreet.setText("NOT SAFE" +
                                             "");
                                 } else {
